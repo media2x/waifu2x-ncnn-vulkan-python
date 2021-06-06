@@ -1,0 +1,3 @@
+[submodule "waifu2x_ncnn_vulkan_python/waifu2x-ncnn-vulkan"]
+	path = waifu2x_ncnn_vulkan_python/waifu2x-ncnn-vulkan
+	url = https://github.com/nihui/waifu2x-ncnn-vulkan.git
