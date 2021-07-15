@@ -9,7 +9,6 @@ cmake_minimum_required(VERSION 3.9)
 set(CMAKE_BUILD_TYPE Release)
 
 option(USE_SYSTEM_NCNN "build with system libncnn" OFF)
-option(USE_SYSTEM_WEBP "build with system libwebp" OFF)
 option(USE_STATIC_MOLTENVK "link moltenvk static library" OFF)
 
 find_package(Threads)
@@ -32,12 +31,12 @@ endif()
 
 macro(waifu2x_add_shader SHADER_SRC)
     get_filename_component(SHADER_SRC_NAME_WE ${SHADER_SRC} NAME_WE)
-    set(SHADER_COMP_HEADER ${CMAKE_CURRENT_BINARY_DIR}/${SHADER_SRC_NAME_WE}.comp.hex.h)
+    set(SHADER_COMP_HEADER ${CMAKE_CURRENT_BINARY_DIR}/waifu2x-ncnn-vulkan/src/${SHADER_SRC_NAME_WE}.comp.hex.h)
 
     add_custom_command(
         OUTPUT ${SHADER_COMP_HEADER}
-        COMMAND ${CMAKE_COMMAND} -DSHADER_SRC=${CMAKE_CURRENT_SOURCE_DIR}/${SHADER_SRC} -DSHADER_COMP_HEADER=${SHADER_COMP_HEADER} -P "${CMAKE_CURRENT_SOURCE_DIR}/generate_shader_comp_header.cmake"
-        DEPENDS ${CMAKE_CURRENT_SOURCE_DIR}/${SHADER_SRC}
+        COMMAND ${CMAKE_COMMAND} -DSHADER_SRC=${CMAKE_CURRENT_SOURCE_DIR}/waifu2x-ncnn-vulkan/src/${SHADER_SRC} -DSHADER_COMP_HEADER=${SHADER_COMP_HEADER} -P "${CMAKE_CURRENT_SOURCE_DIR}/waifu2x-ncnn-vulkan/src/generate_shader_comp_header.cmake"
+        DEPENDS ${CMAKE_CURRENT_SOURCE_DIR}/waifu2x-ncnn-vulkan/src/${SHADER_SRC}
         COMMENT "Preprocessing shader source ${SHADER_SRC_NAME_WE}.comp"
         VERBATIM
     )
@@ -46,7 +45,8 @@ macro(waifu2x_add_shader SHADER_SRC)
     list(APPEND SHADER_SPV_HEX_FILES ${SHADER_COMP_HEADER})
 endmacro()
 
-include_directories(${CMAKE_CURRENT_BINARY_DIR})
+include_directories(${CMAKE_CURRENT_BINARY_DIR}/waifu2x-ncnn-vulkan/src)
+include_directories(${CMAKE_CURRENT_SOURCE_DIR}/waifu2x-ncnn-vulkan/src)
 include_directories(.)
 
 if(OPENMP_FOUND)
@@ -102,7 +102,7 @@ endif()
 
 if(NOT USE_SYSTEM_NCNN)
     # build ncnn library
-    if(NOT EXISTS "${CMAKE_CURRENT_SOURCE_DIR}/ncnn/CMakeLists.txt")
+    if(NOT EXISTS "${CMAKE_CURRENT_SOURCE_DIR}/waifu2x-ncnn-vulkan/src/ncnn/CMakeLists.txt")
         message(FATAL_ERROR "The submodules were not downloaded! Please update submodules with \"git submodule update --init --recursive\" and try again.")
     endif()
 
@@ -202,41 +202,7 @@ if(NOT USE_SYSTEM_NCNN)
     option(WITH_LAYER_multiheadattention "" OFF)
     option(WITH_LAYER_gelu "" OFF)
 
-    add_subdirectory(ncnn)
-endif()
-
-if(USE_SYSTEM_WEBP)
-    set(CMAKE_MODULE_PATH "${CMAKE_CURRENT_SOURCE_DIR}")
-    find_package(WebP)
-    if(NOT TARGET webp)
-        message(WARNING "webp target not found! USE_SYSTEM_WEBP will be turned off.")
-        set(USE_SYSTEM_WEBP OFF)
-    endif()
-endif()
-
-if(NOT USE_SYSTEM_WEBP)
-    # build libwebp library
-    if(NOT EXISTS "${CMAKE_CURRENT_SOURCE_DIR}/libwebp/CMakeLists.txt")
-        message(FATAL_ERROR "The submodules were not downloaded! Please update submodules with \"git submodule update --init --recursive\" and try again.")
-    endif()
-
-    option(WEBP_ENABLE_SIMD "" ON)
-    option(WEBP_BUILD_ANIM_UTILS "" OFF)
-    option(WEBP_BUILD_CWEBP "" OFF)
-    option(WEBP_BUILD_DWEBP "" OFF)
-    option(WEBP_BUILD_GIF2WEBP "" OFF)
-    option(WEBP_BUILD_IMG2WEBP "" OFF)
-    option(WEBP_BUILD_VWEBP "" OFF)
-    option(WEBP_BUILD_WEBPINFO "" OFF)
-    option(WEBP_BUILD_WEBPMUX "" OFF)
-    option(WEBP_BUILD_EXTRAS "" OFF)
-    option(WEBP_BUILD_WEBP_JS "" OFF)
-    option(WEBP_NEAR_LOSSLESS "" OFF)
-    option(WEBP_ENABLE_SWAP_16BIT_CSP "" OFF)
-
-    add_subdirectory(libwebp)
-
-    include_directories(${CMAKE_CURRENT_SOURCE_DIR}/libwebp/src)
+    add_subdirectory("waifu2x-ncnn-vulkan/src/ncnn")
 endif()
 
 waifu2x_add_shader(waifu2x_preproc.comp)
@@ -249,7 +215,7 @@ add_custom_target(generate-spirv DEPENDS ${SHADER_SPV_HEX_FILES})
 #add_executable(waifu2x-ncnn-vulkan main.cpp waifu2x.cpp)
 #add_dependencies(waifu2x-ncnn-vulkan generate-spirv)
 
-set(WAIFU2X_LINK_LIBRARIES ncnn webp ${Vulkan_LIBRARY})
+set(WAIFU2X_LINK_LIBRARIES ncnn ${Vulkan_LIBRARY})
 
 if(USE_STATIC_MOLTENVK)
     find_library(CoreFoundation NAMES CoreFoundation)
@@ -275,12 +241,12 @@ endif()
 
 #target_link_libraries(waifu2x-ncnn-vulkan ${WAIFU2X_LINK_LIBRARIES})
 
-file(COPY ../models DESTINATION .)
-file(COPY waifu2x_ncnn_vulkan.py DESTINATION .)
+file(COPY waifu2x-ncnn-vulkan/models DESTINATION ${CMAKE_CURRENT_BINARY_DIR})
+file(COPY waifu2x_ncnn_vulkan.py DESTINATION ${CMAKE_CURRENT_BINARY_DIR})
 
 set (UseSWIG_TARGET_NAME_PREFERENCE STANDARD)
 set_property(SOURCE waifu2x.i PROPERTY CPLUSPLUS ON DEPENDS generate-spirv)
-swig_add_library(waifu2x_ncnn_vulkan_wrapper LANGUAGE python SOURCES waifu2x.i waifu2x.cpp waifu2x_wrapped.cpp)
+swig_add_library(waifu2x_ncnn_vulkan_wrapper LANGUAGE python SOURCES waifu2x.i waifu2x-ncnn-vulkan/src/waifu2x.cpp waifu2x_wrapped.cpp)
 add_dependencies(waifu2x_ncnn_vulkan_wrapper generate-spirv)
 target_compile_options(waifu2x_ncnn_vulkan_wrapper PUBLIC -fexceptions)
 if (${CMAKE_VERSION} VERSION_LESS "3.15")
