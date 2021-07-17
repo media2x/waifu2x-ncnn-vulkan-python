@@ -241,17 +241,26 @@ endif()
 
 #target_link_libraries(waifu2x-ncnn-vulkan ${WAIFU2X_LINK_LIBRARIES})
 
-file(COPY waifu2x-ncnn-vulkan/models DESTINATION ${CMAKE_CURRENT_BINARY_DIR})
-file(COPY waifu2x_ncnn_vulkan.py DESTINATION ${CMAKE_CURRENT_BINARY_DIR})
-
-set (UseSWIG_TARGET_NAME_PREFERENCE STANDARD)
+set(UseSWIG_TARGET_NAME_PREFERENCE STANDARD)
 set_property(SOURCE waifu2x.i PROPERTY CPLUSPLUS ON DEPENDS generate-spirv)
+
+# set output directory for the .py file
+set_property(SOURCE waifu2x.i PROPERTY OUTFILE_DIR ${CMAKE_CURRENT_BINARY_DIR})
+set_property(SOURCE waifu2x.i PROPERTY OUTPUT_DIR ${CMAKE_CURRENT_BINARY_DIR}/waifu2x_ncnn_vulkan_python)
+
 swig_add_library(waifu2x_ncnn_vulkan_wrapper LANGUAGE python SOURCES waifu2x.i waifu2x-ncnn-vulkan/src/waifu2x.cpp waifu2x_wrapped.cpp)
 add_dependencies(waifu2x_ncnn_vulkan_wrapper generate-spirv)
 target_compile_options(waifu2x_ncnn_vulkan_wrapper PUBLIC -fexceptions)
+
+# set output directory of the .so file
+set_target_properties(waifu2x_ncnn_vulkan_wrapper PROPERTIES LIBRARY_OUTPUT_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}/waifu2x_ncnn_vulkan_python)
+
 if (${CMAKE_VERSION} VERSION_LESS "3.15")
     include_directories(${PYTHON_INCLUDE_DIRS})
     target_link_libraries(waifu2x_ncnn_vulkan_wrapper ${WAIFU2X_LINK_LIBRARIES} ${PYTHON_LIBRARIES})
 else()
     target_link_libraries(waifu2x_ncnn_vulkan_wrapper ${WAIFU2X_LINK_LIBRARIES} Python::Module)
 endif()
+
+file(COPY waifu2x-ncnn-vulkan/models DESTINATION ${CMAKE_CURRENT_BINARY_DIR}/waifu2x_ncnn_vulkan_python)
+file(COPY waifu2x_ncnn_vulkan.py DESTINATION ${CMAKE_CURRENT_BINARY_DIR}/waifu2x_ncnn_vulkan_python)
