@@ -56,10 +56,7 @@ jobs:
       run: |
         mkdir -p ${{ env.PACKAGENAME }}
         cp README.md LICENSE ${{ env.PACKAGENAME }}
-        cp build/${{ env.APPNAME_SHORT }}_ncnn_vulkan.py ${{ env.PACKAGENAME }}
-        cp build/${{ env.APPNAME_SHORT }}_ncnn_vulkan_wrapper.py ${{ env.PACKAGENAME }}
-        cp build/_${{ env.APPNAME_SHORT }}_ncnn_vulkan_wrapper.so ${{ env.PACKAGENAME }}
-        cp -r models/ ${{ env.PACKAGENAME }}
+        cp -r build/${{ env.APPNAME_SHORT }}_ncnn_vulkan_python/* ${{ env.PACKAGENAME }}
         zip -9 -r ${{ env.PACKAGENAME }}.zip ${{ env.PACKAGENAME }}
     - name: upload
       uses: actions/upload-artifact@v2
@@ -99,10 +96,7 @@ jobs:
         run: |
           mkdir -p ${{ env.PACKAGENAME }}
           cp README.md LICENSE ${{ env.PACKAGENAME }}
-          cp build/${{ env.APPNAME_SHORT }}_ncnn_vulkan.py ${{ env.PACKAGENAME }}
-          cp build/${{ env.APPNAME_SHORT }}_ncnn_vulkan_wrapper.py ${{ env.PACKAGENAME }}
-          cp build/_${{ env.APPNAME_SHORT }}_ncnn_vulkan_wrapper.so ${{ env.PACKAGENAME }}
-          cp -r models/ ${{ env.PACKAGENAME }}
+          cp -r build/${{ env.APPNAME_SHORT }}_ncnn_vulkan_python/* ${{ env.PACKAGENAME }}
           zip -9 -r ${{ env.PACKAGENAME }}.zip ${{ env.PACKAGENAME }}
       - name: upload
         uses: actions/upload-artifact@v2
@@ -226,10 +220,7 @@ jobs:
       run: |
         mkdir -p ${{ env.PACKAGENAME }}
         cp README.md LICENSE ${{ env.PACKAGENAME }}
-        cp build-x86_64/${{ env.APPNAME_SHORT }}_ncnn_vulkan.py ${{ env.PACKAGENAME }}
-        cp build-x86_64/${{ env.APPNAME_SHORT }}_ncnn_vulkan_wrapper.py ${{ env.PACKAGENAME }}
-        cp build-x86_64/_${{ env.APPNAME_SHORT }}_ncnn_vulkan_wrapper.so ${{ env.PACKAGENAME }}
-        cp -r models/ ${{ env.PACKAGENAME }}
+        cp -r build-x86_64/${{ env.APPNAME_SHORT }}_ncnn_vulkan_python/* ${{ env.PACKAGENAME }}
         zip -9 -r ${{ env.PACKAGENAME }}.zip ${{ env.PACKAGENAME }}
     - name: upload
       uses: actions/upload-artifact@v2
@@ -283,13 +274,11 @@ jobs:
       run: |
         mkdir ${{ env.PACKAGENAME }}
         ls build
+        ls build\Release
         Copy-Item -Verbose -Path "README.md" -Destination "${{ env.PACKAGENAME }}"
         Copy-Item -Verbose -Path "LICENSE" -Destination "${{ env.PACKAGENAME }}"
-        Copy-Item -Verbose -Path "src\${{ env.APPNAME_SHORT }}_ncnn_vulkan.py" -Destination "${{ env.PACKAGENAME }}"
-        Copy-Item -Verbose -Path "build\${{ env.APPNAME_SHORT }}_ncnn_vulkan_wrapper.py" -Destination "${{ env.PACKAGENAME }}"
-        Copy-Item -Verbose -Path "build\Release\_${{ env.APPNAME_SHORT }}_ncnn_vulkan_wrapper.pyd" -Destination "${{ env.PACKAGENAME }}"
         Copy-Item -Verbose -Path "C:\windows\system32\vcomp140.dll" -Destination "${{ env.PACKAGENAME }}"
-        Copy-Item -Verbose -Recurse -Path "models" -Destination "${{ env.PACKAGENAME }}"
+        Copy-Item -Verbose -Recurse -Path "build\${{ env.APPNAME_SHORT }}_ncnn_vulkan_python\*" -Destination "${{ env.PACKAGENAME }}"
         7z a -r ${{ env.PACKAGENAME }}.zip ${{ env.PACKAGENAME }}
     - name: upload
       uses: actions/upload-artifact@v2
