@@ -6,8 +6,19 @@ import setuptools
 import sys
 
 os.environ.pop("PYTHONNOUSERSITE")
-sys.path.append("/home/k4yt3x/.local/lib/python3.9/site-packages")
-sys.path.append("/usr/lib/python3.9/site-packages")
+sys.path.append(
+    str(
+        pathlib.Path.home()
+        / ".local/lib/python{}.{}/site-packages".format(
+            sys.version_info.major, sys.version_info.minor
+        )
+    )
+)
+sys.path.append(
+    "/usr/lib/python{}.{}/site-packages".format(
+        sys.version_info.major, sys.version_info.minor
+    )
+)
 
 import cmake_build_extension
 
