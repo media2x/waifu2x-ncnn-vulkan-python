@@ -44,7 +44,7 @@ class Waifu2x:
         :param tta_mode: whether to enable tta mode or not
         :param num_threads: the number of threads in upscaling
         :param scale: scale level, 1 = no scaling, 2 = upscale 2x. value: float. default: 2
-        :param noise: noise level, large value means strong denoise effect, -1 = no effect. value: -1/0/1/2/3. default: 0
+        :param noise: denoise level, large value means strong denoise effect, -1 = no effect. value: -1/0/1/2/3. default: 0
         :param tilesize: tile size. 0 for automatically setting the size. default: 0
         """
 
