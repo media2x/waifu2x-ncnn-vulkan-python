@@ -1,0 +1,4 @@
+recursive-include waifu2x_ncnn_vulkan_python/waifu2x-ncnn-vulkan/models *
+recursive-include waifu2x_ncnn_vulkan_python/waifu2x-ncnn-vulkan/src *
+include waifu2x_ncnn_vulkan_python/waifu2x-ncnn-vulkan/LICENSE
+include waifu2x_ncnn_vulkan_python/waifu2x-ncnn-vulkan/README.md
