@@ -7,7 +7,7 @@ Date Created: February 4, 2021
 Last Modified: May 13, 2021
 
 Dev: K4YT3X
-Last Modified: June 5, 2021
+Last Modified: January 27, 2022
 """
 
 # built-in imports
@@ -51,11 +51,6 @@ class Waifu2x:
         # check arguments' validity
         assert scale in (1, 2), "scale must be 1 or 2"
         assert noise in range(4), "noise must be 0-4"
-        assert model in (
-            "models-cunet",
-            "models-upconv_7_anime_style_art_rgb",
-            "models-upconv_7_photo",
-        ), f"unknown model {model}"
         assert isinstance(tta_mode, bool), "tta_mode isn't a boolean value"
         assert num_threads >= 1, "num_threads must be an integer >= 1"
 
