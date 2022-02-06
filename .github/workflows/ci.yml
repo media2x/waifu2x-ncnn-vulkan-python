@@ -66,6 +66,10 @@ jobs:
         with:
           python-version: "3.8"
           architecture: x64
+      - name: Install dependencies
+        run: |
+          brew install swig vulkan-headers
+          pip install build
       - name: Install Vulkan loader
         run: |
           git clone https://github.com/KhronosGroup/Vulkan-Loader.git
@@ -73,10 +77,6 @@ jobs:
           cmake -DVULKAN_HEADERS_INSTALL_DIR=../.. -DCMAKE_INSTALL_PREFIX=../.. -DCMAKE_BUILD_TYPE=Release .
           cmake --build . --config Release
           cmake --install .
-      - name: Install dependencies
-        run: |
-          brew install swig vulkan-headers
-          pip install build
       - name: Build package
         run: |
           python -m build -w .
