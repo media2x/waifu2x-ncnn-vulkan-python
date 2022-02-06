@@ -21,6 +21,9 @@ jobs:
         with:
           python-version: "3.8"
           architecture: x64
+      - name: install Python packages
+        run: |
+          pip install build
       - name: build
         run: |
           python -m build -w .
@@ -34,8 +37,8 @@ jobs:
           submodules: recursive
       - name: install dependencies
         run: |
-          apt-get update
-          apt-get install -y python3-pip python3-venv libvulkan-dev swig
+          sudo apt-get update
+          sudo apt-get install -y python3-pip python3-venv libvulkan-dev swig
           pip install build
       - name: build
         run: |
