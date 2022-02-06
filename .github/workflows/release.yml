@@ -1,4 +1,4 @@
-name: release
+name: Release
 on:
   push:
     tags:
@@ -13,10 +13,10 @@ jobs:
       APPNAME: ${{ steps.get_appname.outputs.APPNAME }}
       VERSION: ${{ steps.get_version.outputs.VERSION }}
     steps:
-      - name: get-appname
+      - name: Get app name
         id: get_appname
         run: echo ::set-output name=APPNAME::${APPLICATION_NAME}
-      - name: get-version
+      - name: Get version
         id: get_version
         run: echo ::set-output name=VERSION::${GITHUB_REF/refs\/tags\//}
   ubuntu:
@@ -108,7 +108,7 @@ jobs:
           Copy-Item -Verbose -Path "LICENSE" -Destination "${{ env.PACKAGENAME }}"
           Copy-Item -Verbose -Recurse -Path dist\* -Destination "${{ env.PACKAGENAME }}"
           7z a -r ${{ env.PACKAGENAME }}.zip ${{ env.PACKAGENAME }}
-      - name: upload
+      - name: Upload
         uses: actions/upload-artifact@v2
         with:
           name: ${{ env.PACKAGENAME }}
@@ -121,11 +121,11 @@ jobs:
       - windows
     runs-on: ubuntu-latest
     steps:
-      - name: download
+      - name: Download
         uses: actions/download-artifact@v2
         with:
           path: artifacts
-      - name: create-release
+      - name: Create release
         id: create_release
         uses: actions/create-release@v1
         env:
@@ -135,7 +135,7 @@ jobs:
           release_name: Release ${{ needs.setup.outputs.VERSION }}
           draft: true
           prerelease: false
-      - name: upload-ubuntu
+      - name: Upload (Ubuntu)
         uses: actions/upload-release-asset@v1
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
@@ -145,7 +145,7 @@ jobs:
           asset_path: artifacts/${{ env.PACKAGENAME }}/${{ env.PACKAGENAME }}.zip
           asset_name: ${{ env.PACKAGENAME }}.zip
           asset_content_type: application/zip
-      - name: upload-ubuntu-1804
+      - name: Upload (Ubuntu-1804)
         uses: actions/upload-release-asset@v1
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
@@ -155,7 +155,7 @@ jobs:
           asset_path: artifacts/${{ env.PACKAGENAME }}/${{ env.PACKAGENAME }}.zip
           asset_name: ${{ env.PACKAGENAME }}.zip
           asset_content_type: application/zip
-      - name: upload-windows
+      - name: Upload (Windows)
         uses: actions/upload-release-asset@v1
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
