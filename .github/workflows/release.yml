@@ -3,6 +3,9 @@ on:
   push:
     tags:
       - "*"
+env:
+  APPLICATION_NAME: waifu2x-ncnn-vulkan-python
+  APPNAME_SHORT: waifu2x
 jobs:
   setup:
     runs-on: ubuntu-latest
