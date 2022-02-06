@@ -68,7 +68,7 @@ jobs:
           architecture: x64
       - name: Install Vulkan loader
         run: |
-          git clone git clone https://github.com/KhronosGroup/Vulkan-Loader.git
+          git clone https://github.com/KhronosGroup/Vulkan-Loader.git
           cd Vulkan-Loader
           cmake -DVULKAN_HEADERS_INSTALL_DIR=../.. -DCMAKE_INSTALL_PREFIX=../.. -DCMAKE_BUILD_TYPE=Release .
           cmake --build . --config Release
