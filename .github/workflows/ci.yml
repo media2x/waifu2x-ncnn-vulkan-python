@@ -5,9 +5,6 @@ on:
       - master
   pull_request: {}
   workflow_dispatch: {}
-env:
-  DEVELOPER_DIR: /Applications/Xcode_12.2.app/Contents/Developer
-  APPNAME_SHORT: waifu2x
 jobs:
   windows:
     runs-on: windows-latest
@@ -15,13 +12,13 @@ jobs:
       - uses: actions/checkout@v2
         with:
           submodules: recursive
-      - name: install Vulkan SDK
+      - name: Install Vulkan SDK
         uses: humbletim/setup-vulkan-sdk@v1.0.3
       - uses: actions/setup-python@v2
         with:
           python-version: "3.8"
           architecture: x64
-      - name: install Python packages
+      - name: Install dependencies
         run: |
           pip install build
       - name: build
@@ -35,12 +32,12 @@ jobs:
       - uses: actions/checkout@v2
         with:
           submodules: recursive
-      - name: install dependencies
+      - name: Install dependencies
         run: |
           sudo apt-get update
           sudo apt-get install -y python3-pip python3-venv libvulkan-dev swig
           pip install build
-      - name: build
+      - name: Build
         run: |
           python -m build -w .
   ubuntu-1804:
@@ -51,12 +48,12 @@ jobs:
       - uses: actions/checkout@v2
         with:
           submodules: recursive
-      - name: install dependencies
+      - name: Install dependencies
         run: |
-          apt-get update
-          apt-get install -y python3-pip python3-venv libvulkan-dev swig
+          sudo apt-get update
+          sudo apt-get install -y python3-pip python3-venv libvulkan-dev swig
           pip install build
-      - name: build
+      - name: Build
         run: |
           python -m build -w .
   macos:
@@ -65,29 +62,14 @@ jobs:
       - uses: actions/checkout@v2
         with:
           submodules: recursive
-      - name: cache-vulkansdk
-        id: cache-vulkansdk
-        uses: actions/cache@v1
+      - uses: actions/setup-python@v2
         with:
-          path: vulkansdk-macos-1.2.162.0
-          key: vulkansdk-macos-1.2.162.0
-      - name: vulkansdk
-        if: steps.cache-vulkansdk.outputs.cache-hit != 'true'
+          python-version: "3.8"
+          architecture: x64
+      - name: Install dependencies
         run: |
-          wget https://sdk.lunarg.com/sdk/download/1.2.162.0/mac/vulkansdk-macos-1.2.162.0.dmg?Human=true -O vulkansdk-macos-1.2.162.0.dmg
-          hdiutil attach vulkansdk-macos-1.2.162.0.dmg
-          cp -r /Volumes/vulkansdk-macos-1.2.162.0 .
-          rm -rf vulkansdk-macos-1.2.162.0/Applications
-          find vulkansdk-macos-1.2.162.0 -type f | grep -v -E 'vulkan|glslang|MoltenVK' | xargs rm
-          hdiutil detach /Volumes/vulkansdk-macos-1.2.162.0
-      - name: install-swig
-        run: brew install swig
-      - name: build-x86_64
+          brew install swig vulkan-headers
+          pip install build
+      - name: Build package
         run: |
-          export VULKAN_SDK=`pwd`/vulkansdk-macos-1.2.162.0/macOS
-          mkdir build-x86_64 && cd build-x86_64
-          cmake -DUSE_STATIC_MOLTENVK=ON -DCMAKE_OSX_ARCHITECTURES="x86_64" \
-              -DVulkan_INCLUDE_DIR=`pwd`/../vulkansdk-macos-1.2.162.0/MoltenVK/include \
-              -DVulkan_LIBRARY=`pwd`/../vulkansdk-macos-1.2.162.0/MoltenVK/MoltenVK.xcframework/macos-arm64_x86_64/libMoltenVK.a \
-              ../${{ env.APPNAME_SHORT }}_ncnn_vulkan_python
-          cmake --build . -j 3
+          python -m build -w .
