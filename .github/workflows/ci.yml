@@ -21,7 +21,7 @@ jobs:
       - name: Install dependencies
         run: |
           pip install build
-      - name: build
+      - name: Build
         run: |
           python -m build -w .
   ubuntu:
@@ -56,25 +56,3 @@ jobs:
       - name: Build
         run: |
           python3 -m build -w .
-  macos:
-    runs-on: macos-latest
-    steps:
-      - uses: actions/checkout@v2
-        with:
-          submodules: recursive
-      - uses: actions/setup-python@v2
-        with:
-          python-version: "3.8"
-          architecture: x64
-      - name: Install dependencies
-        run: |
-          brew install swig
-          pip install build
-      - name: Install Vulkan SDK
-        run: |
-          wget -O install_vulkan_sdk.sh https://raw.githubusercontent.com/technoir42/setup-vulkan-sdk/macos-support/install_vulkan_sdk.sh
-          bash install_vulkan_sdk.sh
-      - name: Build package
-        run: |
-          export CMAKE_ARGS='-DVulkan_INCLUDE_DIR=./VULKAN_SDK/include -DVulkan_LIBRARY=./VULKAN_SDK/lib/libvulkan.so'
-          python -m build -w .
