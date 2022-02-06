@@ -72,18 +72,8 @@ jobs:
           pip install build
       - name: Install Vulkan SDK
         run: |
-          git clone https://github.com/KhronosGroup/Vulkan-Headers.git
-          pushd Vulkan-Headers
-          cmake -DCMAKE_INSTALL_PREFIX=../.. -DCMAKE_BUILD_TYPE=Release .
-          cmake --build . --config Release
-          cmake --install .
-          popd
-          git clone https://github.com/KhronosGroup/Vulkan-Loader.git
-          pushd Vulkan-Loader
-          cmake -DVULKAN_HEADERS_INSTALL_DIR=../.. -DCMAKE_INSTALL_PREFIX=../.. -DCMAKE_BUILD_TYPE=Release .
-          cmake --build . --config Release
-          cmake --install .
-          popd
+          wget -O install_vulkan_sdk.sh https://raw.githubusercontent.com/technoir42/setup-vulkan-sdk/macos-support/install_vulkan_sdk.sh
+          bash install_vulkan_sdk.sh
       - name: Build package
         run: |
-          CMAKE_ARGS='-DVulkan_INCLUDE_DIR=../include/vulkan' python -m build -w .
+          python -m build -w .
