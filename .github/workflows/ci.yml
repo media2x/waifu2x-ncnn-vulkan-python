@@ -86,4 +86,4 @@ jobs:
           popd
       - name: Build package
         run: |
-          python -m build -w .
+          CMAKE_ARGS='-DVulkan_INCLUDE_DIR=../include/vulkan' python -m build -w .
