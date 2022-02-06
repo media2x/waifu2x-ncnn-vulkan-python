@@ -52,10 +52,10 @@ jobs:
         run: |
           sudo apt-get update
           sudo apt-get install -y python3-pip python3-venv libvulkan-dev swig
-          pip install build
+          pip3 install build
       - name: Build
         run: |
-          python -m build -w .
+          python3 -m build -w .
   macos:
     runs-on: macos-latest
     steps:
@@ -66,6 +66,13 @@ jobs:
         with:
           python-version: "3.8"
           architecture: x64
+      - name: Install Vulkan loader
+        run: |
+          git clone git clone https://github.com/KhronosGroup/Vulkan-Loader.git
+          cd Vulkan-Loader
+          cmake -DVULKAN_HEADERS_INSTALL_DIR=../.. -DCMAKE_INSTALL_PREFIX=../.. -DCMAKE_BUILD_TYPE=Release .
+          cmake --build . --config Release
+          cmake --install .
       - name: Install dependencies
         run: |
           brew install swig vulkan-headers
