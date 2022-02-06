@@ -76,4 +76,5 @@ jobs:
           bash install_vulkan_sdk.sh
       - name: Build package
         run: |
+          ls -lah
           CMAKE_ARGS='-DVulkan_INCLUDE_DIR=./VULKAN_SDK/include -DVulkan_LIBRARY=./VULKAN_SDK/lib/libvulkan.so' python -m build -w .
