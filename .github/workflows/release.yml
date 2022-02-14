@@ -241,6 +241,7 @@ jobs:
           cp README.md LICENSE ${{ env.PACKAGENAME }}
           cp -r dist/* ${{ env.PACKAGENAME }}
           zip -9 -r ${{ env.PACKAGENAME }}_${{ matrix.python-version }}.zip ${{ env.PACKAGENAME }}
+      - name: Upload
         uses: actions/upload-release-asset@v1
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
