@@ -268,7 +268,7 @@ target_compile_options(waifu2x_ncnn_vulkan_wrapper PUBLIC -fexceptions)
 
 # set output directory of the .so file
 if (CALL_FROM_SETUP_PY)
-    set_target_properties(waifu2x_ncnn_vulkan_wrapper PROPERTIES LIBRARY_OUTPUT_DIRECTORY ${CMAKE_INSTALL_PREFIX})
+    set_target_properties(waifu2x_ncnn_vulkan_wrapper PROPERTIES LIBRARY_OUTPUT_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR})
 else()
     set_target_properties(waifu2x_ncnn_vulkan_wrapper PROPERTIES LIBRARY_OUTPUT_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}/waifu2x_ncnn_vulkan_python)
 endif()
