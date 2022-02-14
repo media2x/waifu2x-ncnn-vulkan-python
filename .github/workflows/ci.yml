@@ -1,0 +1,58 @@
+name: CI
+on:
+  push:
+    branches:
+      - master
+  pull_request: {}
+  workflow_dispatch: {}
+jobs:
+  windows:
+    runs-on: windows-latest
+    steps:
+      - uses: actions/checkout@v2
+        with:
+          submodules: recursive
+      - name: Install Vulkan SDK
+        uses: humbletim/setup-vulkan-sdk@v1.0.3
+      - uses: actions/setup-python@v2
+        with:
+          python-version: "3.8"
+          architecture: x64
+      - name: Install dependencies
+        run: |
+          pip install build
+      - name: Build
+        run: |
+          python -m build -w .
+  ubuntu:
+    runs-on: ubuntu-latest
+    env:
+      DEBIAN_FRONTEND: noninteractive
+    steps:
+      - uses: actions/checkout@v2
+        with:
+          submodules: recursive
+      - name: Install dependencies
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y python3-pip python3-venv libvulkan-dev swig
+          pip install build
+      - name: Build
+        run: |
+          python -m build -w .
+  ubuntu-1804:
+    runs-on: ubuntu-18.04
+    env:
+      DEBIAN_FRONTEND: noninteractive
+    steps:
+      - uses: actions/checkout@v2
+        with:
+          submodules: recursive
+      - name: Install dependencies
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y python3-pip python3-venv libvulkan-dev swig
+          pip3 install build
+      - name: Build
+        run: |
+          python3 -m build -w .
