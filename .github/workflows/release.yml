@@ -6,6 +6,7 @@ on:
 
 jobs:
   setup:
+    if: github.event.base_ref == "refs/heads/master"
     runs-on: ubuntu-latest
     outputs:
       APPNAME: ${{ steps.get_appname.outputs.APPNAME }}
@@ -40,7 +41,7 @@ jobs:
   windows:
     strategy:
       matrix:
-        python-version: [ '3.6', '3.7', '3.8', '3.9', '3.10']
+        python-version: ["3.6", "3.7", "3.8", "3.9", "3.10"]
 
     needs: [setup, create-release]
 
@@ -133,7 +134,7 @@ jobs:
   ubuntu-1804:
     strategy:
       matrix:
-        python-version: [ '3.6', '3.7', '3.8', '3.9', '3.10' ]
+        python-version: ["3.6", "3.7", "3.8", "3.9", "3.10"]
     needs: [setup, create-release]
     runs-on: ubuntu-18.04
     env:
@@ -195,7 +196,7 @@ jobs:
     needs: [setup, create-release]
     strategy:
       matrix:
-        python-version: [ '3.6', '3.7', '3.8', '3.9', '3.10']
+        python-version: ["3.6", "3.7", "3.8", "3.9", "3.10"]
     env:
       PACKAGENAME: ${{ needs.setup.outputs.APPNAME }}-${{ needs.setup.outputs.VERSION }}-macos
     runs-on: macos-latest
