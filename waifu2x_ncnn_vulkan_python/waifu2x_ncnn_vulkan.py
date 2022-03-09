@@ -50,7 +50,7 @@ class Waifu2x:
 
         # check arguments' validity
         assert scale in (1, 2), "scale must be 1 or 2"
-        assert noise in range(4), "noise must be 0-4"
+        assert noise in range(-1, 4), "noise must be [-1, 3]"
         assert isinstance(tta_mode, bool), "tta_mode isn't a boolean value"
         assert num_threads >= 1, "num_threads must be an integer >= 1"
 
