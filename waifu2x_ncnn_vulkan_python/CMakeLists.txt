@@ -209,6 +209,8 @@ if(NOT USE_SYSTEM_NCNN)
     option(WITH_LAYER_gru "" OFF)
     option(WITH_LAYER_multiheadattention "" OFF)
     option(WITH_LAYER_gelu "" OFF)
+    option(WITH_LAYER_einsum "" OFF)
+    option(WITH_LAYER_deformableconv2d "" OFF)
 
     add_subdirectory("waifu2x-ncnn-vulkan/src/ncnn")
 endif()
